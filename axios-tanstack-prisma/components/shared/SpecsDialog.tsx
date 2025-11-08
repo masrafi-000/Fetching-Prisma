@@ -1,5 +1,6 @@
 import { SpecsFormValues, specsShema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReactNode, useEffect } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -23,7 +24,19 @@ import {
   SelectValue,
 } from "../ui/select";
 
-export default function SpecificationDialog() {
+interface SpecificationDialogProps {
+  initialData?: SpecsFormValues;
+  mode?: "create" | "edit";
+  trigger?: ReactNode;
+  onSubmit: (data: SpecsFormValues) => void;
+}
+
+export default function SpecificationDialog({
+  initialData,
+  mode = "create",
+  trigger,
+  onSubmit,
+}: SpecificationDialogProps) {
   const {
     control,
     register,
@@ -41,24 +54,38 @@ export default function SpecificationDialog() {
     },
   });
 
-  const onSubmit = (data: SpecsFormValues) => {
-    console.log("Submitted Data: ", data);
-    reset();
-  };
+  useEffect(() => {
+    if (initialData) reset(initialData);
+  }, [initialData, reset]);
+
+  const handleFormSubmit = (data: SpecsFormValues) => {
+      onSubmit?.(data)
+      if(mode === "create") reset();
+    };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex-1 cursor-pointer">Create Specification</Button>
+        {trigger || (
+          <Button className="flex-1 cursor-pointer">
+            {mode === "edit" ? "Edit Specification" : "Update Specification"}
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Description</DialogTitle>
-          <DialogDescription>Description for a product</DialogDescription>
+          <DialogTitle>
+            {mode === "edit" ? "Edit Specification" : "Create Specification"}
+          </DialogTitle>
+          <DialogDescription>
+            {mode === "edit"
+              ? "Update product specification details"
+              : "Create specification for a product"}
+          </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="flex flex-col items-center gap-2 w-full">
             <div className="flex flex-col w-full gap-2">
               <Label htmlFor="weight">Weight</Label>
@@ -84,11 +111,11 @@ export default function SpecificationDialog() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="red">Red</SelectItem>
-                        <SelectItem value="white">White</SelectItem>
-                        <SelectItem value="black">Black</SelectItem>
-                        <SelectItem value="pink">Pink</SelectItem>
-                        <SelectItem value="orange">Orange</SelectItem>
+                        <SelectItem value="Red">Red</SelectItem>
+                        <SelectItem value="White">White</SelectItem>
+                        <SelectItem value="Black">Black</SelectItem>
+                        <SelectItem value="Pink">Pink</SelectItem>
+                        <SelectItem value="Orange">Orange</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -147,7 +174,7 @@ export default function SpecificationDialog() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit">Post</Button>
+            <Button type="submit">{mode === "edit" ? "Update" : "Post"}</Button>
           </DialogFooter>
         </form>
       </DialogContent>

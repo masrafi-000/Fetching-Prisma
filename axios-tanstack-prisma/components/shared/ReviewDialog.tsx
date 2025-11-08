@@ -1,3 +1,4 @@
+"use client"
 import { ReviewFormValues, reviewSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form"; 
@@ -23,8 +24,17 @@ import {
   SelectValue,
 } from "../ui/select";
 import { Textarea } from "../ui/textarea";
+import { ReactNode, useEffect } from "react";
 
-export default function ReviewDialog() {
+
+interface ReviewDialogProps {
+  trigger?: ReactNode
+  defaultValues?: ReviewFormValues;
+  mode: "create" | "update"
+  onSubmit: (data: ReviewFormValues) => void
+}
+
+export default function ReviewDialog({trigger, defaultValues, mode = "create", onSubmit}: ReviewDialogProps) {
   const {
     control, 
     register,
@@ -40,24 +50,34 @@ export default function ReviewDialog() {
     },
   });
 
-  const onSubmit = (data: ReviewFormValues) => {
-    console.log("Submitted Data: ", data);
-    reset();
+  useEffect(() => {
+    if(defaultValues) reset(defaultValues)
+  }, [defaultValues, reset])
+
+  const handleFormSubmit = (data: ReviewFormValues) => {
+    onSubmit(data)
+    if(mode === "create") reset();
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex-1 cursor-pointer">Create Review</Button>
+         {trigger || (
+          <Button className="flex-1 cursor-pointer">
+            {mode === "create" ? "Create Review" : "Edit Review"}
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Review</DialogTitle>
-          <DialogDescription>Review for a product</DialogDescription>
+          <DialogTitle> {mode === "create" ? "Create Review" : "Update Review"}</DialogTitle>
+          <DialogDescription>{mode === "create"
+              ? "Write a new review for a product"
+              : "Edit your previous review"}</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="flex flex-col items-center gap-2 w-full">
             <div className="flex flex-col w-full gap-2">
               <Label htmlFor="user">User Name</Label>
@@ -120,7 +140,7 @@ export default function ReviewDialog() {
                 </Button>
               </DialogClose>
               <Button  type="submit" className="cursor-pointer">
-                Post
+                {mode === "create" ? "Post" : "Update"}
               </Button>
             </DialogFooter>
           </div>

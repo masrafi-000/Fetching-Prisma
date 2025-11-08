@@ -2,6 +2,7 @@
 
 import { DescriptionFormValues, descriptionSchema } from "@/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ReactNode, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import {
@@ -18,7 +19,19 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 
-export default function DescriptionDialog() {
+interface DescriptionDialogProps {
+  trigger?: ReactNode;
+  defaultValues?: DescriptionFormValues;
+  mode?: "create" | "update";
+  onSubmit: (data: DescriptionFormValues) => void;
+}
+
+export default function DescriptionDialog({
+  trigger,
+  defaultValues,
+  mode = "create",
+  onSubmit,
+}: DescriptionDialogProps) {
   const {
     register,
     handleSubmit,
@@ -32,25 +45,39 @@ export default function DescriptionDialog() {
     },
   });
 
-  const onSubmit = (data: DescriptionFormValues) => {
-    console.log("Submitted Data: ", data);
-    reset();
+  useEffect(() => {
+    if (defaultValues) reset(defaultValues);
+  }, [defaultValues, reset]);
+
+  const handleFormSubmit = (data: DescriptionFormValues) => {
+    onSubmit(data);
+    if (mode === "create") reset();
   };
 
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className="flex-1 cursor-pointer">Create Description</Button>
+        {trigger || (
+          <Button className="flex-1 cursor-pointer">
+            {mode === "create" ? "Create Description" : "Edit Description"}
+          </Button>
+        )}
       </DialogTrigger>
 
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Description</DialogTitle>
-          <DialogDescription>Description for a product</DialogDescription>
+          <DialogTitle>
+            {mode === "create" ? "Create Description" : "Update Description"}
+          </DialogTitle>
+          <DialogDescription>
+            {" "}
+            {mode === "create"
+              ? "Description for a product"
+              : "Edit the existing description"}
+          </DialogDescription>
         </DialogHeader>
 
-        
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
           <div className="flex flex-col items-center gap-2 w-full">
             <div className="flex flex-col w-full gap-2">
               <Label htmlFor="title">Title</Label>
@@ -85,7 +112,9 @@ export default function DescriptionDialog() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="submit">Post</Button>
+            <Button type="submit">
+              {mode === "create" ? "Post" : "Update"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>
