@@ -18,7 +18,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Textarea } from "../ui/textarea";
 
-export default function DescriptionForm() {
+export default function DescriptionDialog() {
   const {
     register,
     handleSubmit,
@@ -33,7 +33,7 @@ export default function DescriptionForm() {
   });
 
   const onSubmit = (data: DescriptionFormValues) => {
-    console.log("Submittted Data: ", data);
+    console.log("Submitted Data: ", data);
     reset();
   };
 
@@ -49,8 +49,9 @@ export default function DescriptionForm() {
           <DialogDescription>Description for a product</DialogDescription>
         </DialogHeader>
 
+        
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="flex flex-col items-center gap-2  w-full">
+          <div className="flex flex-col items-center gap-2 w-full">
             <div className="flex flex-col w-full gap-2">
               <Label htmlFor="title">Title</Label>
               <Input
@@ -77,16 +78,16 @@ export default function DescriptionForm() {
               )}
             </div>
           </div>
-        </form>
 
-        <DialogFooter>
-          <DialogClose asChild>
-            <Button type="button" variant="destructive">
-              Cancel
-            </Button>
-          </DialogClose>
-          <Button type="submit">Post</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button type="button" variant="destructive">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button type="submit">Post</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

@@ -1,17 +1,21 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  DescriptionFormValues,
-  ReviewFormValues,
-  SpecsFormValues,
-} from "@/schema";
+import { DescriptionWithId, ReviewWithId, SpecsWithId } from "@/schema";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Star } from "lucide-react";
+import { Edit3, Star, Trash2 } from "lucide-react";
 import { useState } from "react";
-import DescriptionForm from "./shared/Descriptionform";
-import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import DescriptionDialog from "./shared/DescriptionForm";
+import ReviewDialog from "./shared/ReviewForm";
+import SpecificationDialog from "./shared/SpecsForm";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "./ui/card";
 
 const tabs = ["description", "review", "specs"];
 
@@ -41,11 +45,11 @@ export default function ProductTabs() {
         <hr className="mt-7 border-2 rounded-2xl -w-full" />
 
         <div className="mt-4 flex  gap-3 w-full">
-          <DescriptionForm />
+          <DescriptionDialog />
 
-          <Button className="flex-1 cursor-pointer">Create Review</Button>
+          <ReviewDialog />
 
-          <Button className="flex-1 cursor-pointer">Create Specs</Button>
+          <SpecificationDialog />
         </div>
       </div>
 
@@ -67,12 +71,7 @@ export default function ProductTabs() {
         <div className="min-h-[150px] flex flex-col gap-2">
           {/* Loading Skeleton */}
           {isLoading || isFetching ? (
-            <div className="text-center">
-              {/* <Skeleton height="4" />
-            <Skeleton height="4" />
-            <Skeleton height="4" width="3/4" /> */}
-              Loading {selected}...
-            </div>
+            <div className="text-center">Loading {selected}...</div>
           ) : null}
 
           {/* Error Message */}
@@ -92,7 +91,7 @@ export default function ProductTabs() {
               <div className="space-y-4">
                 {selected === "description" &&
                   Array.isArray(data) &&
-                  data.map((item: DescriptionFormValues) => (
+                  data.map((item: DescriptionWithId) => (
                     <Card
                       key={item.id}
                       className="border rounded-lg shadow-sm bg-white"
@@ -107,6 +106,22 @@ export default function ProductTabs() {
                           {item.description}
                         </p>
                       </CardContent>
+                      <CardFooter>
+                        <div className="w-full flex justify-end gap-2">
+                          <Button
+                            variant="secondary"
+                            className="cursor-pointer"
+                          >
+                            <Edit3 />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            className="cursor-pointer"
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </CardFooter>
                     </Card>
                   ))}
               </div>
@@ -114,7 +129,7 @@ export default function ProductTabs() {
               <div className="space-y-4">
                 {selected === "review" &&
                   Array.isArray(data) &&
-                  data.map((item: ReviewFormValues) => {
+                  data.map((item: ReviewWithId) => {
                     const ratingNumber = Number(item.rating);
                     return (
                       <Card
@@ -141,6 +156,22 @@ export default function ProductTabs() {
                             {item.comment}
                           </p>
                         </CardContent>
+                        <CardFooter>
+                          <div className="w-full flex justify-end gap-2">
+                            <Button
+                              variant="secondary"
+                              className="cursor-pointer"
+                            >
+                              <Edit3 />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              className="cursor-pointer"
+                            >
+                              <Trash2 />
+                            </Button>
+                          </div>
+                        </CardFooter>
                       </Card>
                     );
                   })}
@@ -149,7 +180,7 @@ export default function ProductTabs() {
               <div className="space-y-4">
                 {selected === "specs" &&
                   Array.isArray(data) &&
-                  data.map((item: SpecsFormValues) => (
+                  data.map((item: SpecsWithId) => (
                     <Card
                       key={item.id}
                       className="border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow"
@@ -178,6 +209,22 @@ export default function ProductTabs() {
                           })}
                         </div>
                       </CardContent>
+                      <CardFooter>
+                        <div className="w-full flex justify-end gap-2">
+                          <Button
+                            variant="secondary"
+                            className="cursor-pointer"
+                          >
+                            <Edit3 />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            className="cursor-pointer"
+                          >
+                            <Trash2 />
+                          </Button>
+                        </div>
+                      </CardFooter>
                     </Card>
                   ))}
               </div>
