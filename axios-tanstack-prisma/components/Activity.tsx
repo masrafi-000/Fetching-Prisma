@@ -1,15 +1,20 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import {
+  DescriptionFormValues,
+  ReviewFormValues,
+  SpecsFormValues,
+} from "@/schema";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { Star } from "lucide-react";
 import { useState } from "react";
 import DescriptionForm from "./shared/Descriptionform";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 
 const tabs = ["description", "review", "specs"];
 
-// === Fetch hook using React Query ===
 function useProductData(type: string | null) {
   return useQuery({
     queryKey: ["product", type],
@@ -24,7 +29,6 @@ function useProductData(type: string | null) {
   });
 }
 
-// === Production-ready ProductTabs Component ===
 export default function ProductTabs() {
   const [selected, setSelected] = useState<string | null>(null);
   const { data, isLoading, isFetching, isError, refetch } =
@@ -46,7 +50,6 @@ export default function ProductTabs() {
       </div>
 
       <div className="">
-        {/* === Tab Buttons === */}
         <div className="flex gap-3 mb-4">
           {tabs.map((tab) => (
             <Button
@@ -61,7 +64,6 @@ export default function ProductTabs() {
 
         <hr className="border-2 rounded-2xl mb-4" />
 
-        {/* === Content Section === */}
         <div className="min-h-[150px] flex flex-col gap-2">
           {/* Loading Skeleton */}
           {isLoading || isFetching ? (
@@ -84,26 +86,102 @@ export default function ProductTabs() {
           )}
 
           {/* Data Display */}
-          {selected === ""}
+
           {data && (
-            <div className="border rounded p-4 bg-gray-50 overflow-auto">
-              <Card>
-                <CardHeader>
+            <>
+              <div className="space-y-4">
+                {selected === "description" &&
+                  Array.isArray(data) &&
+                  data.map((item: DescriptionFormValues) => (
+                    <Card
+                      key={item.id}
+                      className="border rounded-lg shadow-sm bg-white"
+                    >
+                      <CardHeader>
+                        <CardTitle className="text-lg font-semibold text-gray-800">
+                          {item.title}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-700 leading-relaxed">
+                          {item.description}
+                        </p>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
 
-                <CardTitle className="uppercase">{selected} Data</CardTitle>
-                <CardDescription></CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex flex-col gap-4
-                  ">
-                    <h1 className="text-xl font-medium leading-1.5">{data.title}</h1>
-                    <p className="text-base text-gray-600 ">{data.description}</p>
+              <div className="space-y-4">
+                {selected === "review" &&
+                  Array.isArray(data) &&
+                  data.map((item: ReviewFormValues) => {
+                    const ratingNumber = Number(item.rating);
+                    return (
+                      <Card
+                        key={item.id}
+                        className="border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow"
+                      >
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-lg font-semibold text-gray-800">
+                              {item.user}
+                            </CardTitle>
 
-                  </div>
-                </CardContent>
-              </Card>
-             <pre className="text-center">{JSON.stringify(data)}</pre>
-            </div>
+                            <span className="flex gap-1 text-yellow-500 font-medium">
+                              {Array.from({ length: ratingNumber }).map(
+                                (_, index) => (
+                                  <Star key={index} />
+                                )
+                              )}
+                            </span>
+                          </div>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-700 leading-relaxed">
+                            {item.comment}
+                          </p>
+                        </CardContent>
+                      </Card>
+                    );
+                  })}
+              </div>
+
+              <div className="space-y-4">
+                {selected === "specs" &&
+                  Array.isArray(data) &&
+                  data.map((item: SpecsFormValues) => (
+                    <Card
+                      key={item.id}
+                      className="border rounded-lg shadow-sm bg-white hover:shadow-md transition-shadow"
+                    >
+                      <CardHeader>
+                        <CardTitle className="text-lg font-semibold text-gray-800">
+                          Specification #{item.id}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          {Object.entries(item).map(([key, value]) => {
+                            if (key === "id") return null;
+
+                            return (
+                              <div
+                                key={key}
+                                className="flex justify-between border-b py-1 text-gray-700"
+                              >
+                                <span className="font-medium capitalize">
+                                  {key}:{" "}
+                                </span>
+                                <span>{String(value)}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+              </div>
+            </>
           )}
 
           {/* Initial State */}
