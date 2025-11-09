@@ -10,7 +10,7 @@ import {
   SpecsWithId,
 } from "@/schema";
 
-import { useCreateDescription } from "@/hooks/useCreateDescription";
+import { useCreateDescription } from "@/hooks/useDescription";
 import useProductData from "@/hooks/useProduct";
 import { useState } from "react";
 import DescriptionCard from "./cards/DescriptionCard";
@@ -97,6 +97,7 @@ export default function ProductTabs() {
                   data.map((item: DescriptionWithId) => (
                     <DescriptionCard
                       key={item.id}
+                      id={item.id}
                       title={item.title}
                       description={item.description}
                     />

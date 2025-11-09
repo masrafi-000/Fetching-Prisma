@@ -9,19 +9,26 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { useUpdateDescription } from "@/hooks/useDescription";
 
 interface DescriptionProps {
+  id: number
   title: string;
   description: string;
 }
 
-export default function DescriptionCard({
+export default function DescriptionCard({ 
+  id,
   title,
   description,
 }: DescriptionProps) {
+
+  const updateMutation = useUpdateDescription()
+
   const handleUpdate = (data: DescriptionFormValues) => {
     console.log("Updated Description: ", data);
-    console.log("Updated Description: ", data);
+
+    updateMutation.mutate({id, data})
   };
 
   return (

@@ -10,7 +10,7 @@ export const descriptionSchema = z.object({
 });
 
 export type DescriptionFormValues = z.infer<typeof descriptionSchema>;
-export type DescriptionWithId = DescriptionFormValues & { id: string };
+export type DescriptionWithId = DescriptionFormValues & { id: number };
 
 export const reviewSchema = z.object({
   user: z.string(),
