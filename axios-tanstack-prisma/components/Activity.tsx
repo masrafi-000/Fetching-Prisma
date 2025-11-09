@@ -10,6 +10,7 @@ import {
   SpecsWithId,
 } from "@/schema";
 
+import { useCreateDescription } from "@/hooks/useCreateDescription";
 import useProductData from "@/hooks/useProduct";
 import { useState } from "react";
 import DescriptionCard from "./cards/DescriptionCard";
@@ -26,8 +27,11 @@ export default function ProductTabs() {
   const { data, isLoading, isFetching, isError, refetch } =
     useProductData(selected);
 
+  const createMutation = useCreateDescription();
+
   const handleCreate = async (data: DescriptionFormValues) => {
     console.log("Submited data: ", data);
+    createMutation.mutate(data);
   };
 
   const handleReviewCreate = async (data: ReviewFormValues) => {

@@ -30,7 +30,7 @@ export default function ReviewCard({
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="text-lg font-semibold text-gray-800">
-            {user}
+            Review By {user}
           </CardTitle>
 
           <span className="flex gap-1 text-yellow-500 font-medium">
